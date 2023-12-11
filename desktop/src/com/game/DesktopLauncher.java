@@ -8,6 +8,7 @@ import com.game.RougerLike;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+		config.setWindowedMode(RougerLike.WIDTH, RougerLike.HEIGHT);
 		config.setForegroundFPS(60);
 		config.setTitle("Java RougerLike Game");
 		new Lwjgl3Application(new RougerLike(), config);
