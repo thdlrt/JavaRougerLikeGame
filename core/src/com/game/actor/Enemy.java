@@ -5,11 +5,12 @@ import com.game.RougerLike;
 import com.game.alogrithm.EnemyAi;
 import com.game.alogrithm.Move;
 import com.game.alogrithm.PathAlogrithm;
+import com.game.screen.GameScreen;
 
 public class Enemy extends Creature implements Runnable{
     public int maxDis=7,minDis=3;
     int moveInterval=1000;
-    public Enemy(Texture region, int x, int y, RougerLike game) {
+    public Enemy(Texture region, int x, int y, GameScreen game) {
         super(region,x,y,100,10,game);
         this.target=Player.class;
         this.bullet="pix/f_bullet.png";

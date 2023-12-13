@@ -6,14 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.game.RougerLike;
+import com.game.screen.GameScreen;
 
 public class Being extends Actor {
     public int x;
     public int y;
     public int size;
     final private Sprite region;
-    RougerLike game;
-    Being(Texture region, int x, int y, int size,RougerLike game){
+    GameScreen game;
+    Being(Texture region, int x, int y, int size,GameScreen game){
         this.region = new Sprite(region);
         this.size=size;
         this.game=game;
@@ -24,9 +25,9 @@ public class Being extends Actor {
     protected void setPlace(int x,int y){
         this.x=x;
         this.y=y;
-        int dis= RougerLike.CELL_SIZE/2-this.size/2;
+        int dis= GameScreen.CELL_SIZE/2-this.size/2;
         //设置渲染位置
-        setPosition(x*RougerLike.CELL_SIZE+dis,y*RougerLike.CELL_SIZE+dis);
+        setPosition(x*GameScreen.CELL_SIZE+dis,y*GameScreen.CELL_SIZE+dis);
     }
 
     @Override

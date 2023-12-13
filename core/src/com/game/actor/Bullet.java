@@ -3,6 +3,7 @@ package com.game.actor;
 import com.badlogic.gdx.graphics.Texture;
 import com.game.RougerLike;
 import com.game.alogrithm.Move;
+import com.game.screen.GameScreen;
 
 public class Bullet extends Being{
     Move direction;
@@ -11,8 +12,8 @@ public class Bullet extends Being{
     float last;
     public Class<?extends Creature> target;
 
-    public Bullet(Texture region, int x, int y,int at,Move direction,RougerLike game,Class<?extends Creature> target) {
-        super(region,x,y, RougerLike.CELL_SIZE/2,game);
+    public Bullet(Texture region, int x, int y, int at, Move direction, GameScreen game, Class<?extends Creature> target) {
+        super(region,x,y, GameScreen.CELL_SIZE/2,game);
         this.direction=direction;
         this.at=at;
         last=distance-0.1f;

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.game.RougerLike;
 import com.game.alogrithm.Move;
+import com.game.screen.GameScreen;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,8 +21,8 @@ public class Creature extends Being {
     public Class<?extends Creature>target;
     //子弹类名称
     public String bullet;
-    public Creature(Texture region,int x,int y,int health,int at,RougerLike game) {
-        super(region,x,y,RougerLike.CELL_SIZE,game);
+    public Creature(Texture region, int x, int y, int health, int at, GameScreen game) {
+        super(region,x,y,GameScreen.CELL_SIZE,game);
         this.health.set(health);
         this.at = at;
     }

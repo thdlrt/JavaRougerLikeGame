@@ -6,13 +6,21 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.game.RougerLike;
 import com.game.actor.*;
 import com.game.alogrithm.Move;
 import com.game.alogrithm.PlayerInput;
 import com.game.io.ReadMap;
 import com.game.map.Map;
+import com.kotcrab.vis.ui.VisUI;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,8 +43,17 @@ public class GameScreen extends ScreenAdapter {
     //敌人生成频率
     public float generateTime=3f;
     public float generateTimer=0f;
+    public String name;
+    public boolean re;
+    public final RougerLike game;
+    private Skin skin;
+    public GameScreen(String name, boolean re, RougerLike game){
+        this.name=name;
+        this.re=re;
+        this.game=game;
+    }
     @Override
-    public void create () {
+    public void show () {
         manager.load("pix/hero.png", Texture.class);
         manager.load("pix/base.png", Texture.class);
         manager.load("pix/wall.png", Texture.class);
@@ -44,18 +61,37 @@ public class GameScreen extends ScreenAdapter {
         manager.load("pix/f_bullet.png", Texture.class);
         manager.load("pix/enemy.png", Texture.class);
         manager.finishLoading();
+        skin = VisUI.getSkin();
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
-        try {
-            initGame("test");
-        } catch (IOException e) {
-            e.printStackTrace();
+        TextButton menuButton = new TextButton("Menu", skin);
+        menuButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.showMenu();
+            }
+        });
+        Table table = new Table();
+        table.setFillParent(true);
+        table.top().right(); // 定位到舞台的右上角
+        table.add(menuButton).pad(10).align(Align.topRight);
+        if(!re){
+            try {
+                initGame(name);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        else{
+
+        }
+        stage.addActor(table);
     }
 
     @Override
-    public void render () {
+    public void render (float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        float delta = Gdx.graphics.getDeltaTime();
         generateTimer+=delta;
         if(generateTimer>=generateTime){
             generateTimer=0;

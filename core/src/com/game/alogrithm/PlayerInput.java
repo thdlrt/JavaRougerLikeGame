@@ -1,18 +1,18 @@
 package com.game.alogrithm;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.game.RougerLike;
 import com.game.actor.Player;
+import com.game.screen.GameScreen;
 import com.game.util.Utils;
 
 public class PlayerInput extends InputListener {
-    final private RougerLike rougerLike;
+    final private GameScreen rougerLike;
     final private Player player;
-    public PlayerInput(RougerLike rougerLike){
+    public PlayerInput(GameScreen rougerLike){
         this.rougerLike=rougerLike;
         player=rougerLike.player;
     }
@@ -47,7 +47,7 @@ public class PlayerInput extends InputListener {
         Vector2 stageCoordinates = rougerLike.stage.screenToStageCoordinates(new Vector2(screenX, screenY));
         stageCoordinates.x-=50;
         stageCoordinates.y-=50;
-        stageCoordinates.y=(RougerLike.row-1)*RougerLike.CELL_SIZE-stageCoordinates.y;
+        stageCoordinates.y=(GameScreen.row-1)*GameScreen.CELL_SIZE-stageCoordinates.y;
         Vector2 playerPosition = new Vector2(player.getX(), player.getY());
         Vector2 direction = new Vector2(stageCoordinates.x - playerPosition.x, stageCoordinates.y - playerPosition.y);
         direction.nor();
