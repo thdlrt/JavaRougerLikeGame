@@ -1,7 +1,10 @@
 package com.game.map;
 
-import com.game.actor.Being;
+import com.game.actor.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Map {
     int row;
@@ -33,4 +36,34 @@ public class Map {
     public int getHeight() {
         return row;
     }
+    public List<List<Integer>> simpleCapture() {
+        List<List<Integer>> map = new ArrayList<>(col);
+
+        for (int i = 0; i < col; i++) {
+            List<Integer> rowList = new ArrayList<>(row);
+            for (int j = 0; j < row; j++) {
+                if (cells[i][j].isEmpty()) {
+                    rowList.add(0);
+                } else {
+                    if (cells[i][j].getBeing() instanceof Wall) {
+                        rowList.add(1);
+                    } else if (cells[i][j].getBeing() instanceof Player) {
+                        rowList.add(2);
+                    } else if (cells[i][j].getBeing() instanceof Enemy) {
+                        rowList.add(3);
+                    } else if (cells[i][j].getBeing() instanceof Bullet && ((Bullet) cells[i][j].getBeing()).target == Enemy.class) {
+                        rowList.add(4);
+                    } else if (cells[i][j].getBeing() instanceof Bullet && ((Bullet) cells[i][j].getBeing()).target == Player.class) {
+                        rowList.add(5);
+                    } else {
+                        rowList.add(-1);
+                    }
+                }
+            }
+            map.add(rowList);
+        }
+
+        return map;
+    }
+
 }

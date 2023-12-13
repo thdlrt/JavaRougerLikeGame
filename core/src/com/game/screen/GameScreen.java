@@ -18,6 +18,7 @@ import com.game.RougerLike;
 import com.game.actor.*;
 import com.game.alogrithm.Move;
 import com.game.alogrithm.PlayerInput;
+import com.game.io.GameVideo;
 import com.game.io.ReadMap;
 import com.game.map.Map;
 import com.kotcrab.vis.ui.VisUI;
@@ -47,6 +48,7 @@ public class GameScreen extends ScreenAdapter {
     public boolean re;
     public final RougerLike game;
     private Skin skin;
+    private GameVideo video;
     public GameScreen(String name, boolean re, RougerLike game){
         this.name=name;
         this.re=re;
@@ -69,13 +71,14 @@ public class GameScreen extends ScreenAdapter {
         menuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                video.stopCapture();
                 game.showMenu();
             }
         });
         Table table = new Table();
         table.setFillParent(true);
         table.top().right(); // 定位到舞台的右上角
-        table.add(menuButton).pad(10).align(Align.topRight);
+        table.add(menuButton).pad(10).align(Align.topRight).uniformX().minWidth(120).minHeight(80).pad(10, 0, 10, 0);;
         if(!re){
             try {
                 initGame(name);
@@ -87,6 +90,8 @@ public class GameScreen extends ScreenAdapter {
 
         }
         stage.addActor(table);
+        video = new GameVideo(map);
+        video.startCapture();
     }
 
     @Override

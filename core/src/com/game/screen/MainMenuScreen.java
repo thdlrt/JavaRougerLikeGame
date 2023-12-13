@@ -62,7 +62,7 @@ public class MainMenuScreen extends ScreenAdapter {
         gameRecordsButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
+                game.showVideo();
             }
         });
 

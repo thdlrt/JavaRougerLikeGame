@@ -3,6 +3,7 @@ package com.game;
 import com.badlogic.gdx.Game;
 import com.game.screen.GameScreen;
 import com.game.screen.MainMenuScreen;
+import com.game.screen.VideoSCreen;
 
 public class RougerLike extends Game {
 
@@ -25,5 +26,8 @@ public class RougerLike extends Game {
 	}
 	public void showMenu(){
 		setScreen(new MainMenuScreen(this));
+	}
+	public void showVideo(){
+		setScreen(new VideoSCreen(this));
 	}
 }

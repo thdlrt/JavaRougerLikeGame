@@ -1,4 +1,4 @@
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation "com.kotcrab.vis:vis-ui:1.5.3"
