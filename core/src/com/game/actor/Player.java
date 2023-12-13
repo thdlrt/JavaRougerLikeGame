@@ -8,6 +8,8 @@ import com.game.RougerLike;
 public class Player extends Creature {
     public Player(Texture region, int x, int y, RougerLike game) {
         super(region,x,y,200,20,game);
+        this.target=Enemy.class;
+        this.bullet="pix/bullet.png";
     }
 
 }

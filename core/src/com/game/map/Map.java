@@ -27,4 +27,10 @@ public class Map {
     public synchronized boolean checkCell(int x,int y) {
         return cells[x][y].isEmpty();
     }
+    public int getWidth() {
+        return col;
+    }
+    public int getHeight() {
+        return row;
+    }
 }

@@ -2,6 +2,8 @@ package com.game.util;
 
 import com.game.alogrithm.Move;
 
+import java.util.Random;
+
 public class Utils {
     public static Move getBulletDirection(float angle) {
         if (angle >= 22.5 && angle < 67.5) {
@@ -22,4 +24,29 @@ public class Utils {
             return Move.RIGHT;
         }
     }
+    public static int dis(int x1,int y1,int x2,int y2){
+        return Math.abs(x1-x2)+Math.abs(y1-y2);
+    }
+    public static Move generateMove(int x,int y) {
+        if (x == 0 && y == 1) {
+            return Move.UP;
+        } else if (x == 0 && y == -1) {
+            return Move.DOWN;
+        }else if (x == 1 && y == 0) {
+            return Move.RIGHT;
+        }else if (x == -1 && y == 0) {
+            return Move.LEFT;
+        }else if (x == 1 && y == 1) {
+            return Move.UPRight;
+        }else if (x == -1 && y == 1) {
+            return Move.UPLeft;
+        }else if (x == 1 && y == -1) {
+            return Move.DOWNRight;
+        }else if (x == -1 && y == -1) {
+            return Move.DOWNLeft;
+        }
+        return null;
+    }
+    //随机坐标
+
 }

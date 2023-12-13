@@ -16,6 +16,10 @@ public class Creature extends Being {
     private AtomicInteger health = new AtomicInteger(100);
     public int at;
     private volatile boolean isDead = false;
+    //敌人类名称
+    public Class<?extends Creature>target;
+    //子弹类名称
+    public String bullet;
     public Creature(Texture region,int x,int y,int health,int at,RougerLike game) {
         super(region,x,y,RougerLike.CELL_SIZE,game);
         this.health.set(health);
@@ -38,7 +42,7 @@ public class Creature extends Being {
         if(isDead()){
             return;
         }
-        game.shoot(this,op);
+        game.shoot(this,op,target,bullet);
     }
     public void underAttack(int damage){
         if(isDead()){
@@ -47,6 +51,7 @@ public class Creature extends Being {
         health.addAndGet(-damage);
         if(health.get()<=0){
             isDead = true;
+            game.map.delCell(this);
         }
     }
 }

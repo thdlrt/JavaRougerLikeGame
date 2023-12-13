@@ -6,16 +6,28 @@ import com.game.alogrithm.Move;
 
 public class Bullet extends Being{
     Move direction;
-    int at;
+    public int at;
+    float distance=0.3f;
+    float last;
+    public Class<?extends Creature> target;
 
-    public Bullet(Texture region, int x, int y,int at,Move direction,RougerLike game) {
+    public Bullet(Texture region, int x, int y,int at,Move direction,RougerLike game,Class<?extends Creature> target) {
         super(region,x,y, RougerLike.CELL_SIZE/2,game);
         this.direction=direction;
         this.at=at;
+        last=distance-0.1f;
+        this.target=target;
+    }
+    public void move(Move op){
+        setPlace(x+op.getX(),y+op.getY());
     }
     @Override
     public void act(float delta) {
         super.act(delta);
-
+        last+=delta;
+        if(last>0.4f){
+            last=0;
+            game.move(this,direction);
+        }
     }
 }
