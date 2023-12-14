@@ -1,6 +1,7 @@
 package com.game.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -19,6 +20,7 @@ import com.game.actor.*;
 import com.game.alogrithm.Move;
 import com.game.alogrithm.PlayerInput;
 import com.game.io.GameVideo;
+import com.game.io.NetWork;
 import com.game.io.ReadMap;
 import com.game.map.Map;
 import com.game.util.Utils;
@@ -52,12 +54,13 @@ public class GameScreen extends ScreenAdapter {
     public final RougerLike game;
     private Skin skin;
     private GameVideo video;
-    private boolean net=false;
-    public GameScreen(String name, boolean re, RougerLike game,boolean net){
+    private boolean isOnline;
+    public NetWork server;
+    public GameScreen(String name, boolean re, boolean isOnline, RougerLike game){
         this.name=name;
         this.re=re;
         this.game=game;
-        this.net=net;
+        this.isOnline=isOnline;
     }
     @Override
     public void show () {
@@ -86,10 +89,7 @@ public class GameScreen extends ScreenAdapter {
         table.top().right(); // 定位到舞台的右上角
         table.add(menuButton).pad(10).align(Align.topRight).uniformX().minWidth(120).minHeight(80).pad(10, 0, 10, 0);;
         initGame();
-        if(net){
-
-        }
-        else if(!re){
+        if(!re){
             try {
                 newGame(name);
             } catch (IOException e) {

@@ -1,9 +1,8 @@
 package com.game;
 
 import com.badlogic.gdx.Game;
-import com.game.screen.GameScreen;
-import com.game.screen.MainMenuScreen;
-import com.game.screen.VideoSCreen;
+import com.game.io.NetWork;
+import com.game.screen.*;
 
 public class RougerLike extends Game {
 
@@ -22,10 +21,10 @@ public class RougerLike extends Game {
 		super.dispose();
 	}
 	public void newGame(){
-		setScreen(new GameScreen("test",false,this,false));
+		setScreen(new GameScreen("test",false,true,this));
 	}
 	public void loadGame(){
-		setScreen(new GameScreen("test",true,this,false));
+		setScreen(new GameScreen("test",true,true,this));
 	}
 	public void showMenu(){
 		setScreen(new MainMenuScreen(this));
@@ -34,6 +33,20 @@ public class RougerLike extends Game {
 		setScreen(new VideoSCreen(this));
 	}
 	public void onlineGame(){
-		setScreen(new GameScreen("test",false,this,true));
+		NetWork server = new NetWork();
+		int id=0;
+		try {
+			id=server.connect("localhost", 12345);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		if(id==0){
+			GameScreen gameScreen = new GameScreen("test",false,false,this);
+			gameScreen.server=server;
+			setScreen(gameScreen);
+		}
+		else{
+			setScreen(new GuideScreen(id,server,this));
+		}
 	}
 }
