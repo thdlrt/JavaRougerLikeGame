@@ -50,13 +50,13 @@ public class MainMenuScreen extends ScreenAdapter {
         loadGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
+                game.loadGame();
             }
         });
         multerGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
+                game.onlineGame();
             }
         });
         gameRecordsButton.addListener(new ChangeListener() {

@@ -19,15 +19,21 @@ public class RougerLike extends Game {
 
 	@Override
 	public void dispose () {
-
+		super.dispose();
 	}
 	public void newGame(){
-		setScreen(new GameScreen("test",false,this));
+		setScreen(new GameScreen("test",false,this,false));
+	}
+	public void loadGame(){
+		setScreen(new GameScreen("test",true,this,false));
 	}
 	public void showMenu(){
 		setScreen(new MainMenuScreen(this));
 	}
 	public void showVideo(){
 		setScreen(new VideoSCreen(this));
+	}
+	public void onlineGame(){
+		setScreen(new GameScreen("test",false,this,true));
 	}
 }

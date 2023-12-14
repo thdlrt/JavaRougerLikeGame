@@ -14,13 +14,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Creature extends Being {
     private Sprite region;
     //基本属性
-    private AtomicInteger health = new AtomicInteger(100);
+    public AtomicInteger health = new AtomicInteger(100);
     public int at;
     private volatile boolean isDead = false;
     //敌人类名称
     public Class<?extends Creature>target;
     //子弹类名称
     public String bullet;
+    public int gethp(){
+        return health.get();
+    }
     public Creature(Texture region, int x, int y, int health, int at, GameScreen game) {
         super(region,x,y,GameScreen.CELL_SIZE,game);
         this.health.set(health);

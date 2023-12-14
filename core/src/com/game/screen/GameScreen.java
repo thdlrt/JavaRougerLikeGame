@@ -21,9 +21,12 @@ import com.game.alogrithm.PlayerInput;
 import com.game.io.GameVideo;
 import com.game.io.ReadMap;
 import com.game.map.Map;
+import com.game.util.Utils;
 import com.kotcrab.vis.ui.VisUI;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class GameScreen extends ScreenAdapter {
@@ -49,10 +52,12 @@ public class GameScreen extends ScreenAdapter {
     public final RougerLike game;
     private Skin skin;
     private GameVideo video;
-    public GameScreen(String name, boolean re, RougerLike game){
+    private boolean net=false;
+    public GameScreen(String name, boolean re, RougerLike game,boolean net){
         this.name=name;
         this.re=re;
         this.game=game;
+        this.net=net;
     }
     @Override
     public void show () {
@@ -72,6 +77,7 @@ public class GameScreen extends ScreenAdapter {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 video.stopCapture();
+                map.detailCapture();
                 game.showMenu();
             }
         });
@@ -79,15 +85,19 @@ public class GameScreen extends ScreenAdapter {
         table.setFillParent(true);
         table.top().right(); // 定位到舞台的右上角
         table.add(menuButton).pad(10).align(Align.topRight).uniformX().minWidth(120).minHeight(80).pad(10, 0, 10, 0);;
-        if(!re){
+        initGame();
+        if(net){
+
+        }
+        else if(!re){
             try {
-                initGame(name);
+                newGame(name);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         else{
-
+            loadGame();
         }
         stage.addActor(table);
         video = new GameVideo(map);
@@ -162,26 +172,28 @@ public class GameScreen extends ScreenAdapter {
         bulletGroup.addActor(bullet);
     }
     //读取地图
-    public void initGame(String name)
-            throws IOException {
-        if(stage!=null)
+    public void initGame(){
+        if (stage != null)
             stage.dispose();
         stage = new Stage();
-        map = new Map(row,col);
-        stage.addActor(itemGroup=new Group());
-        stage.addActor(enemyGroup=new Group());
+        map = new Map(row, col);
+        stage.addActor(itemGroup = new Group());
+        stage.addActor(enemyGroup = new Group());
         //初始化背景
-        for(int i=0;i<row;i++){
-            for(int j=0;j<col;j++){
-                Base base = new Base(manager.get("pix/base.png", Texture.class),j,i,this);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                Base base = new Base(manager.get("pix/base.png", Texture.class), j, i, this);
                 itemGroup.addActor(base);
             }
         }
+        stage.addActor(bulletGroup=new Group());
+        Gdx.input.setInputProcessor(stage);
+    }
+    public void newGame(String name) throws IOException {
         //初始化玩家
         player = new Player(manager.get("pix/hero.png", Texture.class),8,5,this);
         map.setCell(player);
         stage.addActor(player);
-        Gdx.input.setInputProcessor(stage);
         PlayerInput playerInput = new PlayerInput(this);
         stage.addListener(playerInput);
         //初始化地图(障碍物)
@@ -191,6 +203,53 @@ public class GameScreen extends ScreenAdapter {
             map.setCell(wall);
             itemGroup.addActor(wall);
         }
-        stage.addActor(bulletGroup=new Group());
+    }
+    public void loadGame(){
+        Path path = Paths.get("history/resume.txt");
+        List<List<Integer>> res = null;
+        try {
+            res = ReadMap.resumeMap(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for(List<Integer>line:res){
+            int x = line.get(0);
+            int y = line.get(1);
+            int type = line.get(2);
+            if(type==1){
+                Wall wall = new Wall(manager.get("pix/wall.png", Texture.class),x,y,this);
+                map.setCell(wall);
+                itemGroup.addActor(wall);
+            }
+            else if(type==2){
+                player = new Player(manager.get("pix/hero.png", Texture.class),x,y,this);
+                player.health.set(line.get(3));
+                player.at=line.get(4);
+                map.setCell(player);
+                stage.addActor(player);
+                Gdx.input.setInputProcessor(stage);
+                PlayerInput playerInput = new PlayerInput(this);
+                stage.addListener(playerInput);
+            }
+            else if(type==3){
+                Enemy enemy = new Enemy(manager.get("pix/enemy.png", Texture.class),x,y,this);
+                enemy.health.set(line.get(3));
+                enemy.at=line.get(4);
+                map.setCell(enemy);
+                enemyGroup.addActor(enemy);
+                Thread enemyThread = new Thread(enemy);
+                enemyThread.start();
+            }
+            else if(type==4){
+                Bullet bullet = new Bullet(manager.get("pix/bullet.png", Texture.class),x,y,line.get(3), Utils.generateMove(line.get(4),line.get(5)),this,Enemy.class);
+                map.setCell(bullet);
+                bulletGroup.addActor(bullet);
+            }
+            else if(type==5){
+                Bullet bullet = new Bullet(manager.get("pix/f_bullet.png", Texture.class),x,y,line.get(3),Utils.generateMove(line.get(4),line.get(5)),this,Player.class);
+                map.setCell(bullet);
+                bulletGroup.addActor(bullet);
+            }
+        }
     }
 }

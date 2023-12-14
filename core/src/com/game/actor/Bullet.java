@@ -6,7 +6,7 @@ import com.game.alogrithm.Move;
 import com.game.screen.GameScreen;
 
 public class Bullet extends Being{
-    Move direction;
+    public Move direction;
     public int at;
     float distance=0.3f;
     float last;
