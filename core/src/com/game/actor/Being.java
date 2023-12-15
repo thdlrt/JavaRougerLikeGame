@@ -14,15 +14,18 @@ public class Being extends Actor {
     public int size;
     final private Sprite region;
     GameScreen game;
-    Being(Texture region, int x, int y, int size,GameScreen game){
-        this.region = new Sprite(region);
+    public Being(Texture region, int x, int y, int size, GameScreen game){
+        if(region==null)
+            this.region=null;
+        else
+            this.region = new Sprite(region);
         this.size=size;
         this.game=game;
         setSize(size, size);
         setPlace(x,y);
     }
 
-    protected void setPlace(int x,int y){
+    public void setPlace(int x, int y){
         this.x=x;
         this.y=y;
         int dis= GameScreen.CELL_SIZE/2-this.size/2;

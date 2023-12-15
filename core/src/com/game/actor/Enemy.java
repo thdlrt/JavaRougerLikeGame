@@ -19,7 +19,7 @@ public class Enemy extends Creature implements Runnable{
     public void run() {
         EnemyAi ai=new EnemyAi(game.map);
         boolean running=true;
-        while (!isDead()&&running&&game.player!=null) {
+        while (!isDead()&&running&&game.getPlayer()!=null) {
             Move nextMove = ai.getNextMove(x,y,minDis);
             Move nextAttack=ai.getAttack(x,y,maxDis);
             if(nextAttack!=null){

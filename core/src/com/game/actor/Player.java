@@ -15,10 +15,12 @@ public class Player extends Creature {
         this.target=Enemy.class;
         this.bullet="pix/bullet.png";
         this.own=own;
-        font = new BitmapFont();
-        font.setColor(Color.BLACK);
-        font2 = new BitmapFont();
-        font2.setColor(Color.RED);
+        if(region!=null) {
+            font = new BitmapFont();
+            font.setColor(Color.BLACK);
+            font2 = new BitmapFont();
+            font2.setColor(Color.RED);
+        }
     }
     @Override
     public void draw(Batch batch, float parentAlpha){

@@ -2,6 +2,10 @@ sourceCompatibility = 1.8
 dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation "com.kotcrab.vis:vis-ui:1.5.3"
+    implementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'org.mockito:mockito-core:2.4.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

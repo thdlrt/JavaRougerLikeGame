@@ -14,11 +14,26 @@ import com.game.RougerLike;
 import com.kotcrab.vis.ui.VisUI;
 
 public class MainMenuScreen extends ScreenAdapter {
-    private Stage stage;
-    private Skin skin; // 用于按钮的样式
+    public Stage stage=null;
+    public Skin skin=null; // 用于按钮的样式
     public AssetManager manager= new AssetManager();
+    public final RougerLike game;
     public MainMenuScreen(RougerLike rougerlike) {
-        final RougerLike game = rougerlike;
+        game = rougerlike;
+    }
+
+    public Skin getSkin() {
+        return skin;
+    }
+    public Stage getStage() {
+        return stage;
+    }
+    public RougerLike getGame() {
+        return game;
+    }
+
+    @Override
+    public void show() {
         manager.load("pix/menu.png", Texture.class);
         manager.finishLoading();
         Texture bgTexture = manager.get("pix/menu.png", Texture.class);
@@ -91,23 +106,13 @@ public class MainMenuScreen extends ScreenAdapter {
         table.add(exitButton).fillX().uniformX().minHeight(80).pad(10, 0, 10, 0);
 
         stage.addActor(table);
+        Gdx.input.setInputProcessor(stage);
     }
-
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // 清屏
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
-    }
-
-    @Override
-    public void show() {
-        Gdx.input.setInputProcessor(stage); // 设置输入处理器
-    }
-
-    @Override
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
     }
 
     @Override

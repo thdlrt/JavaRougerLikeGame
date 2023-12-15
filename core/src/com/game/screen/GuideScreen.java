@@ -37,6 +37,9 @@ public class GuideScreen extends ScreenAdapter {
         this.id = id;
         this.server = netWork;
         this.game = rougerLike;
+    }
+    @Override
+    public void show() {
         manager.load("pix/hero.png", Texture.class);
         manager.load("pix/base.png", Texture.class);
         manager.load("pix/wall.png", Texture.class);
@@ -46,9 +49,6 @@ public class GuideScreen extends ScreenAdapter {
         manager.finishLoading();
         skin = VisUI.getSkin();
         stage = new Stage();
-    }
-    @Override
-    public void show() {
         Gdx.input.setInputProcessor(stage);
         TextButton menuButton = new TextButton("Menu", skin);
         menuButton.addListener(new ChangeListener() {

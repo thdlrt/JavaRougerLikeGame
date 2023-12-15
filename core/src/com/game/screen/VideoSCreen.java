@@ -34,6 +34,12 @@ public class VideoSCreen extends ScreenAdapter {
     RougerLike game;
     Group videoGroup;
     public VideoSCreen(RougerLike game) {
+        time = 0;
+        cnt = 0;
+        this.game=game;
+    }
+    @Override
+    public void show() {
         manager.load("pix/hero.png", Texture.class);
         manager.load("pix/base.png", Texture.class);
         manager.load("pix/wall.png", Texture.class);
@@ -42,12 +48,6 @@ public class VideoSCreen extends ScreenAdapter {
         manager.load("pix/enemy.png", Texture.class);
         manager.finishLoading();
         stage = new Stage();
-        time = 0;
-        cnt = 0;
-        this.game=game;
-    }
-    @Override
-    public void show() {
         // 读取地图
         Gdx.input.setInputProcessor(stage);
         video = new ArrayList<>();
@@ -90,6 +90,12 @@ public class VideoSCreen extends ScreenAdapter {
         table.top().right(); // 定位到舞台的右上角
         table.add(menuButton).pad(10).align(Align.topRight).uniformX().minWidth(120).minHeight(80).pad(10, 0, 10, 0);;
         videoGroup = new Group();
+        for(int i=0;i<GameScreen.col;i++){
+            for(int j=0;j<GameScreen.row;j++){
+                Base base = new Base(manager.get("pix/base.png", Texture.class),i,j,null);
+                stage.addActor(base);
+            }
+        }
         stage.addActor(videoGroup);
         stage.addActor(table);
     }
@@ -105,10 +111,7 @@ public class VideoSCreen extends ScreenAdapter {
             videoGroup.clear();
             for(int i=0;i<GameScreen.col;i++)
                 for(int j=0;j<GameScreen.row;j++) {
-                    if (video.get(cnt).get(i).get(j) == 0) {
-                        Base base = new Base(manager.get("pix/base.png", Texture.class),i,j,null);
-                        videoGroup.addActor(base);
-                    } else if (video.get(cnt).get(i).get(j) == 1) {
+                    if (video.get(cnt).get(i).get(j) == 1) {
                         Wall wall = new Wall(manager.get("pix/wall.png", Texture.class),i,j,null);
                         videoGroup.addActor(wall);
                     } else if (video.get(cnt).get(i).get(j) == 2) {
@@ -123,8 +126,6 @@ public class VideoSCreen extends ScreenAdapter {
                     } else if (video.get(cnt).get(i).get(j) == 5) {
                         Bullet bullet = new Bullet(manager.get("pix/f_bullet.png", Texture.class),i,j,0,null,null,null);
                         videoGroup.addActor(bullet);
-                    } else {
-                        throw new RuntimeException("Unknown type: " + video.get(cnt).get(i).get(j));
                     }
                 }
             ++cnt;

@@ -48,7 +48,7 @@ public class GameScreen extends ScreenAdapter {
     public static int CELL_SIZE = 100;
     public static int HEIGHT = row*CELL_SIZE;
     public static int WIDTH = col*CELL_SIZE;
-    public Player player;
+    private Player player=null;
     public Group enemyGroup;
     public Group bulletGroup;
     public Group itemGroup;
@@ -70,6 +70,9 @@ public class GameScreen extends ScreenAdapter {
         this.re=re;
         this.game=game;
         this.isOnline=isOnline;
+    }
+    public Player getPlayer(){
+        return player;
     }
     @Override
     public void show () {
@@ -116,7 +119,7 @@ public class GameScreen extends ScreenAdapter {
             loadGame();
         }
         stage.addActor(table);
-        video = new GameVideo(map);
+        video = new GameVideo(map,false);
         video.startCapture();
     }
 
@@ -308,7 +311,7 @@ public class GameScreen extends ScreenAdapter {
         PlayerInput playerInput = new PlayerInput(this);
         stage.addListener(playerInput);
         //初始化地图(障碍物)
-        List<List<Integer>> res= ReadMap.readMap(name);
+        List<List<Integer>> res= ReadMap.readMap(Paths.get("map/"+name+".txt"));
         for(List<Integer> i:res){
             Wall wall = new Wall(manager.get("pix/wall.png", Texture.class),i.get(1),i.get(0),this);
             map.setCell(wall);

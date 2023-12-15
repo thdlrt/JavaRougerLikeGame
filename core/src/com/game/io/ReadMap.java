@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReadMap {
-    static public List<List<Integer>> readMap(String map)
+    static public List<List<Integer>> readMap(Path path)
     throws IOException {
-        map="map/"+map+".txt";
         List<List<Integer>>res = new ArrayList<>();
-        Path path = Paths.get(map);
         List<String> lines = Files.readAllLines(path);
         for(int i=0;i<lines.size();i++) {
             String[] line = lines.get(i).split(" ");

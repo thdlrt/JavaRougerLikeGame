@@ -1,6 +1,7 @@
 package com.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.Texture;
 import com.game.io.NetWork;
 import com.game.screen.*;
 

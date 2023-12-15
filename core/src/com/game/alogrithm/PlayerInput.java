@@ -14,7 +14,7 @@ public class PlayerInput extends InputListener {
     final private Player player;
     public PlayerInput(GameScreen rougerLike){
         this.rougerLike=rougerLike;
-        player=rougerLike.player;
+        player=rougerLike.getPlayer();
     }
     @Override
     public boolean keyDown(InputEvent event, int keycode) {

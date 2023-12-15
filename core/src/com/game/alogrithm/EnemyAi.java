@@ -8,7 +8,9 @@ import java.util.*;
 
 public class EnemyAi implements PathAlogrithm,AttackAlogrithm {
     Map map;
-    Player target;
+    public Player target;
+
+
     public EnemyAi(Map map) {
         this.map=map;
     }

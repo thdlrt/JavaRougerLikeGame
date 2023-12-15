@@ -15,9 +15,15 @@ public class GameVideo {
     Map map;
     List<List<List<Integer>>> video;
     Timer.Task CaptureTask;
-    public GameVideo(Map map){
+    boolean test;
+    public GameVideo(Map map,boolean test){
         this.map=map;
+        this.test=test;
         video = new ArrayList<>();
+        if(test){
+            video.add(map.simpleCapture());
+            return;
+        }
         CaptureTask = new Timer.Task() {
             @Override
             public void run() {
@@ -26,9 +32,14 @@ public class GameVideo {
         };
     }
     public void startCapture(){
+        if(test){
+            return;
+        }
         Timer.schedule(CaptureTask, 0, 0.2f);
     }
     public void stopCapture(){
+        if(test)
+            return;
         CaptureTask.cancel();
         Path path = Paths.get("video/video.txt");
         try {
