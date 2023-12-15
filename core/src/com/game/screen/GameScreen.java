@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -29,7 +30,12 @@ import com.kotcrab.vis.ui.VisUI;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.lang.Integer.parseInt;
 
 public class GameScreen extends ScreenAdapter {
     SpriteBatch batch;
@@ -56,6 +62,9 @@ public class GameScreen extends ScreenAdapter {
     private GameVideo video;
     private boolean isOnline;
     public NetWork server;
+    public HashMap<Integer,Player>players=new HashMap<>();
+    //地图状态（用于网络联机）
+    List<List<Integer>>caption=null;
     public GameScreen(String name, boolean re, boolean isOnline, RougerLike game){
         this.name=name;
         this.re=re;
@@ -82,6 +91,13 @@ public class GameScreen extends ScreenAdapter {
                 video.stopCapture();
                 map.detailCapture();
                 game.showMenu();
+                if(isOnline){
+                    try {
+                        server.disconnect();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         });
         Table table = new Table();
@@ -110,26 +126,100 @@ public class GameScreen extends ScreenAdapter {
         generateTimer+=delta;
         if(generateTimer>=generateTime){
             generateTimer=0;
-            generateEnemy();
+            //generateEnemy();
+        }
+        if(isOnline){
+            String s;
+            List<String> msg=null;
+            while(true){
+                try{
+                    s = server.receive();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                if(s==null)
+                    break;
+                msg = Arrays.stream(s.split("\\s+"))
+                        .collect(Collectors.toList());
+                int id=Integer.parseInt(msg.get(0));
+                if(id!=0){
+                    if(!players.containsKey(id)){
+                        sendMap();
+                        int[] pos = generateEmptyPosition();
+                        Player player = new Player(manager.get("pix/hero.png", Texture.class),pos[0],pos[1],this);
+                        players.put(id,player);
+                        map.setCell(player);
+                        stage.addActor(player);
+                    }
+                    if(msg.size()>1){
+                        int op = parseInt(msg.get(1));
+                        if(op==1){
+                            char c = msg.get(2).charAt(0);
+                            if(c=='w')
+                                move(players.get(id),Move.UP);
+                            else if(c=='s')
+                                move(players.get(id),Move.DOWN);
+                            else if(c=='a')
+                                move(players.get(id),Move.LEFT);
+                            else if(c=='d')
+                                move(players.get(id),Move.RIGHT);
+                        }
+                        else if(op==2){
+                            float x = Float.parseFloat(msg.get(2));
+                            float y = Float.parseFloat(msg.get(3));
+                            Vector2 stageCoordinates = new Vector2(x,y);
+                            Vector2 playerPosition = new Vector2(players.get(id).getX(), players.get(id).getY());
+                            Vector2 direction = new Vector2(stageCoordinates.x - playerPosition.x, stageCoordinates.y - playerPosition.y);
+                            direction.nor();
+                            float angle = direction.angleDeg();
+                            // 确定子弹的方向
+                            Move bulletDirection = Utils.getBulletDirection(angle);
+                            players.get(id).attack(bulletDirection);
+                        }
+                    }
+                }
+            }
+            //地图状态
+            List<List<Integer>>_caption=map.simpleCapture();
+            //如果地图状态发生改变
+            if(caption==null||!caption.equals(_caption)){
+                caption=_caption;
+                sendMap();
+            }
         }
         stage.act(delta);
         stage.draw();
     }
-
+    private void sendMap(){
+        StringBuilder data= new StringBuilder("0 ");
+        for(List<Integer>line:caption){
+            for(int i:line){
+                data.append(i).append(" ");
+            }
+        }
+        try {
+            server.send(data.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Override
     public void dispose () {
         batch.dispose();
         stage.dispose();
         manager.dispose();
     }
-
-    private void generateEnemy(){
+    private int[] generateEmptyPosition(){
         int x,y;
         do{
             x=(int)(Math.random()*col);
             y=(int)(Math.random()*row);
         }while(!map.checkCell(x,y));
-        Enemy enemy = new Enemy(manager.get("pix/enemy.png", Texture.class),x,y,this);
+        return new int[]{x,y};
+    }
+    private void generateEnemy(){
+        int[]pos=generateEmptyPosition();
+        Enemy enemy = new Enemy(manager.get("pix/enemy.png", Texture.class),pos[0],pos[1],this);
         map.setCell(enemy);
         enemyGroup.addActor(enemy);
         Thread enemyThread = new Thread(enemy);
@@ -192,6 +282,7 @@ public class GameScreen extends ScreenAdapter {
     public void newGame(String name) throws IOException {
         //初始化玩家
         player = new Player(manager.get("pix/hero.png", Texture.class),8,5,this);
+        players.put(0,player);
         map.setCell(player);
         stage.addActor(player);
         PlayerInput playerInput = new PlayerInput(this);

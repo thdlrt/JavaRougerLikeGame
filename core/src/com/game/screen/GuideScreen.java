@@ -19,14 +19,15 @@ import com.game.alogrithm.GuideInput;
 import com.game.io.NetWork;
 import com.kotcrab.vis.ui.VisUI;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GuideScreen extends ScreenAdapter {
-    private int id;
+    public int id;
     private Skin skin;
-    private Stage stage;
+    public Stage stage;
     private final RougerLike game;
     public final NetWork server;
     private AssetManager manager= new AssetManager();
@@ -66,16 +67,27 @@ public class GuideScreen extends ScreenAdapter {
         table.top().right(); // 定位到舞台的右上角
         table.add(menuButton).pad(10).align(Align.topRight).uniformX().minWidth(120).minHeight(80).pad(10, 0, 10, 0);
         videoGroup = new Group();
+        for(int i=0;i<GameScreen.col;i++){
+            for(int j=0;j<GameScreen.row;j++){
+                Base base = new Base(manager.get("pix/base.png", Texture.class),i,j,null);
+                stage.addActor(base);
+            }
+        }
         stage.addActor(videoGroup);
         stage.addActor(table);
         stage.addListener(new GuideInput(this));
+        try {
+            server.send(id+"");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.render(delta);
         String s;
-        List<Integer> n_caption=null;
+        List<String> n_caption=null;
         while(true){
             try{
                 s = server.receive();
@@ -85,37 +97,34 @@ public class GuideScreen extends ScreenAdapter {
             if(s==null)
                 break;
             n_caption= Arrays.stream(s.split("\\s+"))
-                    .map(Integer::parseInt)
                     .collect(Collectors.toList());
-            if(n_caption.get(0)==0){
-                caption=n_caption;
-                break;
+            if(Integer.parseInt(n_caption.get(0))==0){
+                caption= new ArrayList<>();
+                for(String i:n_caption){
+                   caption.add(Integer.parseInt(i));
+                }
             }
+            //System.out.println("receive："+s);
         }
-        if(caption!=null&&n_caption!=null&&n_caption.get(0)==0) {
+        if(caption!=null&&n_caption!=null&&caption.size()==n_caption.size()) {
             videoGroup.clear();
             for (int i = 0; i < GameScreen.col; i++) {
                 for (int j = 0; j < GameScreen.row; j++) {
-                    if (caption.get(i * GameScreen.col + j + 1) == 0) {
-                        Base base = new Base(manager.get("pix/base.png", Texture.class), i, j, null);
-                        videoGroup.addActor(base);
-                    } else if (caption.get(i * GameScreen.col + j + 1) == 1) {
+                    if (caption.get(i * GameScreen.row + j + 1) == 1) {
                         Wall wall = new Wall(manager.get("pix/wall.png", Texture.class), i, j, null);
                         videoGroup.addActor(wall);
-                    } else if (caption.get(i * GameScreen.col + j + 1) == 2) {
+                    } else if (caption.get(i * GameScreen.row + j + 1) == 2) {
                         Player player = new Player(manager.get("pix/hero.png", Texture.class), i, j, null);
                         videoGroup.addActor(player);
-                    } else if (caption.get(i * GameScreen.col + j + 1) == 3) {
+                    } else if (caption.get(i * GameScreen.row + j + 1) == 3) {
                         Enemy enemy = new Enemy(manager.get("pix/enemy.png", Texture.class), i, j, null);
                         videoGroup.addActor(enemy);
-                    } else if (caption.get(i * GameScreen.col + j + 1) == 4) {
+                    } else if (caption.get(i * GameScreen.row + j + 1) == 4) {
                         Bullet bullet = new Bullet(manager.get("pix/bullet.png", Texture.class), i, j, 0, null, null, null);
                         videoGroup.addActor(bullet);
-                    } else if (caption.get(i * GameScreen.col + j + 1) == 5) {
+                    } else if (caption.get(i * GameScreen.row + j + 1) == 5) {
                         Bullet bullet = new Bullet(manager.get("pix/f_bullet.png", Texture.class), i, j, 0, null, null, null);
                         videoGroup.addActor(bullet);
-                    } else {
-                        throw new RuntimeException("Unknown type: " + caption.get(i * GameScreen.col + j + 1));
                     }
                 }
             }

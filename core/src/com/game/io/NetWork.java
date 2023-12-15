@@ -41,7 +41,7 @@ public class NetWork {
     }
 
     public void send(String message) throws Exception {
-
+        message+= "\n";
         writeBuffer.clear();
         writeBuffer.put(message.getBytes(StandardCharsets.UTF_8));
         writeBuffer.flip();
@@ -53,39 +53,21 @@ public class NetWork {
     private StringBuilder incompleteMessage = new StringBuilder();
 
     public String receive() throws Exception {
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        ByteBuffer buffer = ByteBuffer.allocate(10000);
         int bytesRead = socketChannel.read(buffer);
-        if (bytesRead <= 0) {
-            return null;
-        }
-
         buffer.flip();
         incompleteMessage.append(StandardCharsets.UTF_8.decode(buffer).toString());
-
+        System.out.println("byte"+incompleteMessage.toString());
         // 检查是否包含完整消息（检查分隔符）
         int delimiterIndex = incompleteMessage.indexOf("\n");
         if (delimiterIndex != -1) {
             String completeMessage = incompleteMessage.substring(0, delimiterIndex);
             incompleteMessage.delete(0, delimiterIndex + 1); // 移除已处理的消息部分
+            if(completeMessage.equals(""))
+                return receive();
             return completeMessage;
         }
 
         return null;
-    }
-
-    public static void main(String[] args) {
-        NetWork client = new NetWork();
-        try {
-            client.connect("localhost", 12345); // 连接服务器
-            client.send("Hello, Server!"); // 发送信息
-            // 接收信息
-            String response = client.receive();
-            if (response != null) {
-                System.out.println("Server response: " + response);
-            }
-            client.disconnect(); // 断开连接
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

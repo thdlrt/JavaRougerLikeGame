@@ -21,10 +21,10 @@ public class RougerLike extends Game {
 		super.dispose();
 	}
 	public void newGame(){
-		setScreen(new GameScreen("test",false,true,this));
+		setScreen(new GameScreen("test",false,false,this));
 	}
 	public void loadGame(){
-		setScreen(new GameScreen("test",true,true,this));
+		setScreen(new GameScreen("test",true,false,this));
 	}
 	public void showMenu(){
 		setScreen(new MainMenuScreen(this));
@@ -41,7 +41,7 @@ public class RougerLike extends Game {
 			throw new RuntimeException(e);
 		}
 		if(id==0){
-			GameScreen gameScreen = new GameScreen("test",false,false,this);
+			GameScreen gameScreen = new GameScreen("test",false,true,this);
 			gameScreen.server=server;
 			setScreen(gameScreen);
 		}
