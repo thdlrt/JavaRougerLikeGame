@@ -37,7 +37,8 @@ public class GameVideoTest {
 
     @Test
     public void testStopCaptureAndFileWriting() throws IOException {
-        Path path = Paths.get("E:\\JavaRougerLikeGame\\assets\\video\\video.txt");
+        //获取当前路径
+        Path path = Paths.get("../assets/video/video.txt");
         gameVideo.stopCapture();
         assertTrue(Files.exists(path));
         List<String> lines = Files.readAllLines(path);

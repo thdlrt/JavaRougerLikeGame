@@ -22,13 +22,9 @@ public class Server {
     private AtomicInteger activeConnections = new AtomicInteger();
 
     public Server() throws Exception {
-        // 打开选择器
         selector = Selector.open();
-        // 打开服务器套接字通道
         serverSocketChannel = ServerSocketChannel.open();
-        // 将服务器套接字通道绑定到端口
         serverSocketChannel.bind(new InetSocketAddress(PORT));
-        // 配置为非阻塞模式
         serverSocketChannel.configureBlocking(false);
         // 注册到选择器，等待连接
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -38,9 +34,7 @@ public class Server {
         System.out.println("Server started...");
 
         while (true) {
-            // 选择一组键，其相应的通道已准备好进行I/O操作
             selector.select();
-            // 获取当前注册的选择键集
             Set<SelectionKey> selectedKeys = selector.selectedKeys();
             Iterator<SelectionKey> iter = selectedKeys.iterator();
 
@@ -68,25 +62,17 @@ public class Server {
         // 为新客户端分配唯一的ID
         int clientId = clientIdCounter.getAndIncrement();
 
-        // 将客户端ID转换为字节缓冲区
         ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
         buffer.putInt(clientId);
         buffer.flip();
 
-        // 将客户端ID发送给客户端
         while (buffer.hasRemaining()) {
             channel.write(buffer);
         }
 
-        // 注册通道到选择器，等待读操作
         channel.register(selector, SelectionKey.OP_READ);
         activeConnections.incrementAndGet();
         System.out.println("New connection from " + channel.getRemoteAddress() + " with client ID " + clientId);
-        //广播新玩家的加入
-//        if(activeConnections.get()!=1) {
-//            String s="10 "+activeConnections.get();
-//            broadcast(s.getBytes(StandardCharsets.UTF_8), channel);
-//        }
     }
 
     private void read(SelectionKey key) throws Exception {
