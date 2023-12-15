@@ -112,7 +112,7 @@ public class VideoSCreen extends ScreenAdapter {
                         Wall wall = new Wall(manager.get("pix/wall.png", Texture.class),i,j,null);
                         videoGroup.addActor(wall);
                     } else if (video.get(cnt).get(i).get(j) == 2) {
-                        Player player = new Player(manager.get("pix/hero.png", Texture.class),i,j,null);
+                        Player player = new Player(manager.get("pix/hero.png", Texture.class),i,j,false,null);
                         videoGroup.addActor(player);
                     } else if (video.get(cnt).get(i).get(j) == 3) {
                         Enemy enemy = new Enemy(manager.get("pix/enemy.png", Texture.class),i,j,null);

@@ -104,7 +104,15 @@ public class GuideScreen extends ScreenAdapter {
                    caption.add(Integer.parseInt(i));
                 }
             }
-            //System.out.println("receive："+s);
+            else if(Integer.parseInt(n_caption.get(0))==-1){
+                try {
+                    server.disconnect();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                game.showMenu();
+                return;
+            }
         }
         if(caption!=null&&n_caption!=null&&caption.size()==n_caption.size()) {
             videoGroup.clear();
@@ -113,9 +121,6 @@ public class GuideScreen extends ScreenAdapter {
                     if (caption.get(i * GameScreen.row + j + 1) == 1) {
                         Wall wall = new Wall(manager.get("pix/wall.png", Texture.class), i, j, null);
                         videoGroup.addActor(wall);
-                    } else if (caption.get(i * GameScreen.row + j + 1) == 2) {
-                        Player player = new Player(manager.get("pix/hero.png", Texture.class), i, j, null);
-                        videoGroup.addActor(player);
                     } else if (caption.get(i * GameScreen.row + j + 1) == 3) {
                         Enemy enemy = new Enemy(manager.get("pix/enemy.png", Texture.class), i, j, null);
                         videoGroup.addActor(enemy);
@@ -126,6 +131,22 @@ public class GuideScreen extends ScreenAdapter {
                         Bullet bullet = new Bullet(manager.get("pix/f_bullet.png", Texture.class), i, j, 0, null, null, null);
                         videoGroup.addActor(bullet);
                     }
+                }
+            }
+            for(int i=GameScreen.col*GameScreen.row+1;i<caption.size();i+=4){
+                int id=Integer.parseInt(n_caption.get(i));
+                int x=Integer.parseInt(n_caption.get(i+1));
+                int y=Integer.parseInt(n_caption.get(i+2));
+                int hp=Integer.parseInt(n_caption.get(i+3));
+                if(id==this.id){
+                    Player player = new Player(manager.get("pix/hero.png", Texture.class), x, y,true, null);
+                    player.health.set(hp);
+                    videoGroup.addActor(player);
+                }
+                else{
+                    Player player = new Player(manager.get("pix/hero.png", Texture.class), x, y,false, null);
+                    player.health.set(hp);
+                    videoGroup.addActor(player);
                 }
             }
         }

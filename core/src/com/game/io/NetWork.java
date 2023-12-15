@@ -57,7 +57,6 @@ public class NetWork {
         int bytesRead = socketChannel.read(buffer);
         buffer.flip();
         incompleteMessage.append(StandardCharsets.UTF_8.decode(buffer).toString());
-        System.out.println("byte"+incompleteMessage.toString());
         // 检查是否包含完整消息（检查分隔符）
         int delimiterIndex = incompleteMessage.indexOf("\n");
         if (delimiterIndex != -1) {

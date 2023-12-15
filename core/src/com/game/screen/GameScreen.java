@@ -53,7 +53,7 @@ public class GameScreen extends ScreenAdapter {
     public Group bulletGroup;
     public Group itemGroup;
     //敌人生成频率
-    public float generateTime=3f;
+    public float generateTime=7f;
     public float generateTimer=0f;
     public String name;
     public boolean re;
@@ -122,11 +122,25 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render (float delta) {
+        if(player.isDead()){
+            video.stopCapture();
+            map.detailCapture();
+            if(isOnline){
+                try {
+                    server.send("-1");
+                    server.disconnect();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            game.showMenu();
+            return;
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         generateTimer+=delta;
         if(generateTimer>=generateTime){
             generateTimer=0;
-            //generateEnemy();
+            generateEnemy();
         }
         if(isOnline){
             String s;
@@ -146,7 +160,7 @@ public class GameScreen extends ScreenAdapter {
                     if(!players.containsKey(id)){
                         sendMap();
                         int[] pos = generateEmptyPosition();
-                        Player player = new Player(manager.get("pix/hero.png", Texture.class),pos[0],pos[1],this);
+                        Player player = new Player(manager.get("pix/hero.png", Texture.class),pos[0],pos[1],false,this);
                         players.put(id,player);
                         map.setCell(player);
                         stage.addActor(player);
@@ -197,6 +211,12 @@ public class GameScreen extends ScreenAdapter {
                 data.append(i).append(" ");
             }
         }
+        players.forEach((key, value) -> {
+            data.append(key).append(" ");
+            data.append(value.x).append(" ");
+            data.append(value.y).append(" ");
+            data.append(value.health.get()).append(" ");
+        });
         try {
             server.send(data.toString());
         } catch (Exception e) {
@@ -281,7 +301,7 @@ public class GameScreen extends ScreenAdapter {
     }
     public void newGame(String name) throws IOException {
         //初始化玩家
-        player = new Player(manager.get("pix/hero.png", Texture.class),8,5,this);
+        player = new Player(manager.get("pix/hero.png", Texture.class),8,5,true,this);
         players.put(0,player);
         map.setCell(player);
         stage.addActor(player);
@@ -313,7 +333,7 @@ public class GameScreen extends ScreenAdapter {
                 itemGroup.addActor(wall);
             }
             else if(type==2){
-                player = new Player(manager.get("pix/hero.png", Texture.class),x,y,this);
+                player = new Player(manager.get("pix/hero.png", Texture.class),x,y,true,this);
                 player.health.set(line.get(3));
                 player.at=line.get(4);
                 map.setCell(player);
